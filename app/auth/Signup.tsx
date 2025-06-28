@@ -1,7 +1,7 @@
+import { signUpUser } from '@/services/apiService';
+import { Link, router } from 'expo-router';
 import { useState } from 'react';
-import { router } from 'expo-router';
-import { signUpUser } from '@/services/auth';
-import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
+import { Alert, Button, StyleSheet, Text, TextInput, View } from 'react-native';
 
 export default function Signup() {
   const [form, setForm] = useState({ name: '', email: '', password: '' });
@@ -41,10 +41,10 @@ export default function Signup() {
 const handleSignup = async () => {
   if (!validate()) return;
 
-  const { data, error } = await signUpUser(form.name, form.email, form.password);
+  const response = await signUpUser(form.name, form.email, form.password);
 
-  if (error) {
-    Alert.alert('Signup Failed', error.message);
+  if (!response) {
+    Alert.alert('Signup Failed', response.message);
   } else {
     Alert.alert('Signup Successful', 'You can now login');
     // setForm({ name: '', email: '', password: '' });
@@ -82,6 +82,12 @@ const handleSignup = async () => {
       {errors.password ? <Text style={styles.error}>{errors.password}</Text> : null}
 
       <Button title="Sign Up" onPress={handleSignup} />
+       <Text>
+  Already have an account?{" "}
+  <Text style={styles.link} onPress={() => router.replace("/auth/Login")}>
+    Login
+  </Text>
+</Text>
     </View>
   );
 }
@@ -106,5 +112,9 @@ const styles = StyleSheet.create({
   error: {
     color: 'red',
     marginBottom: 10,
+  },
+   link: {
+    color: 'blue',
+    textDecorationLine: 'underline',
   },
 });

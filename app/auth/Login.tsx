@@ -1,6 +1,7 @@
+import { loginUser } from "@/services/apiService";
+import { Link, router } from "expo-router";
 import { useState } from "react";
-import { View, Text, TextInput, Button, StyleSheet, Alert } from "react-native";
-import { loginUser } from "@/services/auth";
+import { Alert, Button, StyleSheet, Text, TextInput, View } from "react-native";
 
 export default function Login() {
   const [form, setForm] = useState({ email: "", password: "" });
@@ -36,12 +37,14 @@ export default function Login() {
   if (!validate()) return;
 
   try {
-    const { data, error } = await loginUser(form.email, form.password);
+    const response = await loginUser(form.email, form.password);
 
-    if (error || !data) {
+    if (!response) {
       Alert.alert("Login Failed", "Invalid email or password");
     } else {
-      Alert.alert("Login Successful", `Welcome ${data.name}`);
+      Alert.alert("Login Successful", `Welcome ${response.user?.name}`);
+      router.push('/creator/createQuestion');
+      
       // Navigate to the next screen here if needed
     }
   } catch (err) {
@@ -74,6 +77,12 @@ export default function Login() {
       {errors.password ? <Text style={styles.error}>{errors.password}</Text> : null}
 
       <Button title="Login" onPress={handleLogin} />
+      <Text>
+  Don’t have an account?{' '}
+  <Text style={styles.link} onPress={() => router.replace('/auth/Signup')}>
+    Sign up
+  </Text>
+</Text>
     </View>
   );
 }
@@ -98,5 +107,9 @@ const styles = StyleSheet.create({
   error: {
     color: "red",
     marginBottom: 10,
+  },
+  link: {
+    color: 'blue',
+    textDecorationLine: 'underline',
   },
 });

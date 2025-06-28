@@ -8,10 +8,10 @@ export default function Index() {
       <Text style={styles.title}>Quizz</Text>
       <View style={styles.buttons}>
         <View style={styles.buttonWrapper}>
-          <Button title="Login" onPress={() => router.push("/auth/Login")} />
+        <Button title="✅ Attend Quizz" onPress={() => router.push('/attendee/quizzcodeScreen')} />
         </View>
         <View style={styles.buttonWrapper}>
-          <Button title="Sign Up" onPress={() => router.push("/auth/Signup")} />
+        <Button title="🔐 Create Quizz" color='grey' onPress={() => router.push('/auth/Login')} />
         </View>
       </View>
     </View>
@@ -38,5 +38,5 @@ const styles = StyleSheet.create({
   },
   buttonWrapper: {
     marginBottom: 10, 
-  }
+  },
 });
