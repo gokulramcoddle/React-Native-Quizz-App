@@ -1,4 +1,3 @@
-// app/index.tsx
 import { View, Text, Button, StyleSheet } from "react-native";
 import { router } from "expo-router";
 
@@ -8,7 +7,7 @@ export default function Index() {
       <Text style={styles.title}>Quizz</Text>
       <View style={styles.buttons}>
         <View style={styles.buttonWrapper}>
-        <Button title="✅ Attend Quizz" onPress={() => router.push('/attendee/quizzcodeScreen')} />
+        <Button title="✅ Attend Quizz" onPress={() => router.push('/attendee/entryScreen')} />
         </View>
         <View style={styles.buttonWrapper}>
         <Button title="🔐 Create Quizz" color='grey' onPress={() => router.push('/auth/Login')} />
@@ -27,7 +26,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 54,
-    fontWeight: 500,
+    fontWeight: "500",
     marginBottom: 20,
     textAlign: "center",
   },

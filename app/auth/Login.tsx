@@ -42,7 +42,7 @@ export default function Login() {
     if (!response) {
       Alert.alert("Login Failed", "Invalid email or password");
     } else {
-      Alert.alert("Login Successful", `Welcome ${response.user?.name}`);
+      Alert.alert("Login Successful", `Welcome ${response?.userName}`);
       router.push('/creator/createQuestion');
       
       // Navigate to the next screen here if needed

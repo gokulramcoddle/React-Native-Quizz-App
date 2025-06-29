@@ -3,17 +3,23 @@ import { useState } from 'react';
 import { router } from 'expo-router';
 
 export default function AttendInfoScreen() {
-  const [form, setForm] = useState({ name: '', email: '' });
-  const [errors, setErrors] = useState({ name: '', email: '' });
+  const [form, setForm] = useState({ code: '', name: '', email: '' });
+  const [errors, setErrors] = useState({ code: '', name: '', email: '' });
 
-  const handleChange = (key: 'name' | 'email', value: string) => {
+  const handleChange = (key: 'code' | 'name' | 'email', value: string) => {
     setForm((prev) => ({ ...prev, [key]: value }));
     setErrors((prev) => ({ ...prev, [key]: '' }));
   };
 
   const validate = () => {
     let valid = true;
-    const newErrors = { name: '', email: '' };
+    const newErrors = { code: '', name: '', email: '' };
+
+    
+    if (!form.code.trim()) {
+      newErrors.code = 'Code is required';
+      valid = false;
+    }
 
     if (!form.name.trim()) {
       newErrors.name = 'Name is required';
@@ -32,18 +38,26 @@ export default function AttendInfoScreen() {
     return valid;
   };
 
-  const handleNext = () => {
+  const handleStart = () => {
     if (!validate()) return;
 
     // Optionally store name/email in storage or context here
 
     // Redirect to quiz code input or quiz screen
-    router.push('/attend'); // change this to your actual route
+    router.push('/attendee/entryScreen'); // change this to your actual route
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Enter Your Details</Text>
+
+<TextInput
+        placeholder="Code"
+        style={styles.input}
+        value={form.code}
+        onChangeText={(text) => handleChange('code', text)}
+      />
+      {errors.code ? <Text style={styles.error}>{errors.code}</Text> : null}
 
       <TextInput
         placeholder="Name"
@@ -62,7 +76,7 @@ export default function AttendInfoScreen() {
       />
       {errors.email ? <Text style={styles.error}>{errors.email}</Text> : null}
 
-      <Button title="Start" onPress={handleNext} />
+      <Button title="Start" onPress={handleStart} />
     </View>
   );
 }

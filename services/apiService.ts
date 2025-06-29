@@ -1,4 +1,5 @@
 import { apiRequest, saveToken } from './api';
+import { saveUser } from './authenticatedUser';
 
 export const loginUser = async (email: string, password: string) => {
   const data = await apiRequest({
@@ -11,9 +12,11 @@ export const loginUser = async (email: string, password: string) => {
   if (data?.token) {
     await saveToken(data.token);
   }
-  console.log(data);
 
-  return data;
+  if(data?.user){
+    await saveUser(data.user);
+  }
+  return {message: data.message,success: data.success, userName: data?.user?.name};
 };
 
 
@@ -31,3 +34,43 @@ export const signUpUser = async (
 
   return response;
 };
+
+
+type Option = {
+  text: string;
+  is_correct: boolean;
+};
+
+type CreateQuestionPayload = {
+  quizzId: number;
+  text: string;
+  options: Option[];
+};
+
+export const createQuestion = async (data: CreateQuestionPayload) => {
+  const res = await apiRequest({
+    method: 'POST',
+    url: '/quizz/qacreate',
+    data: {
+      quizz_id: data.quizzId,
+      text: data.text,
+      options: data.options,
+    },
+    withAuth: false,
+  });
+
+  return res;
+};
+
+export const createQuizz = async ( title: string, user_id: number) => {
+  const res = await apiRequest({
+    method: 'POST',
+    url: '/quizz/create',
+    data: {
+      title, user_id
+    },
+    withAuth: true,
+  })
+
+  return res;
+}

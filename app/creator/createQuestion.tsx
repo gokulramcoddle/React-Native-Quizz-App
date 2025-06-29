@@ -1,156 +1,6 @@
-// import { View, Text, Button, TextInput, StyleSheet, Modal, Pressable } from "react-native";
-// import { useState } from "react";
-// import { useLocalSearchParams } from "expo-router";
-
-// export default function CreateQuestions() {
-//   const { title } = useLocalSearchParams();
-//   const [showModal, setShowModal] = useState(false);
-//   const [questionText, setQuestionText] = useState("");
-//   const [options, setOptions] = useState(["", "", "", ""]);
-//   const [correctIndex, setCorrectIndex] = useState<number | null>(null);
-
-//   const handleOptionChange = (value: string, index: number) => {
-//     const newOptions = [...options];
-//     newOptions[index] = value;
-//     setOptions(newOptions);
-//   };
-
-//   const handleAddQuestion = () => {
-//     if (!questionText.trim() || correctIndex === null || options.some(o => !o.trim())) return;
-
-//     console.log({
-//       question: questionText,
-//       options: options.map((opt, i) => ({
-//         text: opt,
-//         is_correct: i === correctIndex
-//       }))
-//     });
-
-//     // Reset after adding
-//     setQuestionText("");
-//     setOptions(["", "", "", ""]);
-//     setCorrectIndex(null);
-//     setShowModal(false);
-//   };
-
-//   return (
-//     <View style={styles.container}>
-//       <Text style={styles.title}>{title}</Text>
-
-//       <Button title="➕ Add Question" onPress={() => setShowModal(true)} />
-
-//       <Modal visible={showModal} animationType="slide" transparent>
-//         <View style={styles.modalOverlay}>
-//           <View style={styles.modalContent}>
-//             <Text style={styles.modalTitle}>New Question</Text>
-
-//             <TextInput
-//               placeholder="Question title"
-//               style={styles.input}
-//               value={questionText}
-//               onChangeText={setQuestionText}
-//             />
-
-//             {options.map((opt, i) => (
-//               <View key={i} style={styles.optionRow}>
-//                 <TextInput
-//                   placeholder={`Option ${i + 1}`}
-//                   value={opt}
-//                   onChangeText={(text) => handleOptionChange(text, i)}
-//                   style={styles.optionInput}
-//                 />
-//                 <Pressable onPress={() => setCorrectIndex(i)} style={styles.radio}>
-//                   <View style={[styles.radioOuter, correctIndex === i && styles.radioSelected]}>
-//                     {correctIndex === i && <View style={styles.radioInner} />}
-//                   </View>
-//                 </Pressable>
-//               </View>
-//             ))}
-
-//             <View style={styles.buttonRow}>
-//               <Button title="Cancel" onPress={() => setShowModal(false)} />
-//               <Button title="Add" onPress={handleAddQuestion} />
-//             </View>
-//           </View>
-//         </View>
-//       </Modal>
-//     </View>
-//   );
-// }
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     padding: 24,
-//     justifyContent: "flex-start",
-//   },
-//   title: {
-//     fontSize: 22,
-//     fontWeight: "600",
-//     marginBottom: 20,
-//   },
-//   modalOverlay: {
-//     flex: 1,
-//     backgroundColor: "#00000099",
-//     justifyContent: "center",
-//     padding: 20,
-//   },
-//   modalContent: {
-//     backgroundColor: "white",
-//     borderRadius: 12,
-//     padding: 20,
-//     gap: 10,
-//   },
-//   modalTitle: {
-//     fontSize: 20,
-//     fontWeight: "bold",
-//     marginBottom: 10,
-//   },
-//   input: {
-//     borderWidth: 1,
-//     padding: 10,
-//     borderRadius: 6,
-//     marginBottom: 10,
-//   },
-//   optionRow: {
-//     flexDirection: "row",
-//     alignItems: "center",
-//     gap: 10,
-//     marginBottom: 8,
-//   },
-//   optionInput: {
-//     flex: 1,
-//     borderWidth: 1,
-//     padding: 8,
-//     borderRadius: 6,
-//   },
-//   radio: {
-//     padding: 5,
-//   },
-//   radioOuter: {
-//     width: 20,
-//     height: 20,
-//     borderRadius: 10,
-//     borderWidth: 2,
-//     borderColor: "#333",
-//     alignItems: "center",
-//     justifyContent: "center",
-//   },
-//   radioInner: {
-//     width: 10,
-//     height: 10,
-//     borderRadius: 5,
-//     backgroundColor: "#333",
-//   },
-//   radioSelected: {
-//     borderColor: "#007bff",
-//   },
-//   buttonRow: {
-//     flexDirection: "row",
-//     justifyContent: "space-between",
-//     marginTop: 10,
-//   },
-// });
+import { getUser } from "@/services/authenticatedUser";
+import { createQuestion, createQuizz } from "@/services/apiService";
+import * as Clipboard from 'expo-clipboard';
 import React, { useState } from "react";
 import {
   View,
@@ -161,30 +11,13 @@ import {
   StyleSheet,
   TouchableOpacity,
   ScrollView,
+  Alert,
 } from "react-native";
 
 export default function CreateQuestions() {
-  const defaultQuestions = [
-    {
-      text: "What is 2 + 2?",
-      options: [
-        { text: "3", is_correct: false },
-        { text: "4", is_correct: true },
-        { text: "5", is_correct: false },
-        { text: "22", is_correct: false },
-      ],
-    },
-    {
-      text: "Which is the capital of France?",
-      options: [
-        { text: "Berlin", is_correct: false },
-        { text: "Madrid", is_correct: false },
-        { text: "Paris", is_correct: true },
-        { text: "Rome", is_correct: false },
-      ],
-    },
-  ];
-
+  const [quizTitle, setQuizTitle] = useState("");
+  const [successModalVisible, setSuccessModalVisible] = useState(false);
+const [generatedCode, setGeneratedCode] = useState<string | null>(null); 
   const [questions, setQuestions] = useState<any[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [questionText, setQuestionText] = useState("");
@@ -199,7 +32,14 @@ export default function CreateQuestions() {
     setEditIndex(null);
   };
 
-  const handleSave = () => {
+  const handleCopy = () => {
+  if (generatedCode) {
+    Clipboard.setStringAsync(generatedCode);
+    Alert.alert("Copied", "Quiz code copied to clipboard!");
+  }
+}
+
+  const handleSave = async() => {
     if (!questionText || correctIndex === null || options.some(o => !o.trim())) return;
 
     const newQuestion = {
@@ -232,19 +72,75 @@ export default function CreateQuestions() {
   };
 
   const handleDelete = (index: number) => {
-    const updated = [...questions];
-    updated.splice(index, 1);
-    setQuestions(updated);
+    Alert.alert("Confirm Delete", "Are you sure you want to delete this question?", [
+      { text: "Cancel", style: "cancel" },
+      {
+        text: "Delete",
+        style: "destructive",
+        onPress: () => {
+          const updated = [...questions];
+          updated.splice(index, 1);
+          setQuestions(updated);
+        },
+      },
+    ]);
   };
+
+ const handlePublish = async () => {
+  if (!quizTitle.trim() || questions.length === 0) {
+    Alert.alert("Validation", "Please enter a quiz title and at least one question.");
+    return;
+  }
+
+  try {
+    const userData = await getUser();
+    if (!userData?.id) {
+      throw new Error("User not found");
+    }
+
+    // 1. Create the quiz
+    const quizResponse = await createQuizz(quizTitle, userData.id);
+    const quizzId = quizResponse?.quiz.id || 0;
+
+    if (!quizResponse|| !quizzId) {
+      throw new Error("Quiz creation failed");
+    }
+
+    // 2. Create all questions for the created quiz
+    for (const q of questions) {
+     await createQuestion({
+        quizzId,
+        text: q.text,
+        options: q.options,
+      });
+    }
+setGeneratedCode(quizResponse?.quiz?.code || `QUIZZ-${quizzId}`);
+setSuccessModalVisible(true);
+
+    // Optional: Reset form
+    setQuizTitle("");
+    setQuestions([]);
+  } catch (err) {
+    console.error("Error publishing quiz:", err);
+    Alert.alert("Error", "Failed to publish quiz. Please try again.");
+  }
+};
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Quiz: My Sample Quiz</Text>
+      <Text style={styles.title}>Create Quiz</Text>
+      <Text>Quizz Title:</Text>
+      <TextInput
+        placeholder="Enter Quiz Title"
+        value={quizTitle}
+        onChangeText={setQuizTitle}
+        style={styles.input}
+      />
 
       <Button title="+ Add Question" onPress={() => { resetForm(); setShowModal(true); }} />
 
       <ScrollView style={{ marginTop: 20 }}>
-        {[...defaultQuestions, ...questions].map((q, index) => (
+        {questions.map((q, index) => (
           <View key={index} style={styles.questionItem}>
             <View style={{ flex: 1 }}>
               <Text style={styles.questionText}>{index + 1}. {q.text}</Text>
@@ -254,15 +150,17 @@ export default function CreateQuestions() {
                 </Text>
               ))}
             </View>
-            {index >= defaultQuestions.length && (
-              <View style={styles.qButtons}>
-                <Button title="✏️" onPress={() => handleEdit(index - defaultQuestions.length)} />
-                <Button title="🗑️" color="red" onPress={() => handleDelete(index - defaultQuestions.length)} />
-              </View>
-            )}
+            <View style={styles.qButtons}>
+              <Button title="✏️" onPress={() => handleEdit(index)} />
+              <Button title="🗑️" color="red" onPress={() => handleDelete(index)} />
+            </View>
           </View>
         ))}
       </ScrollView>
+
+      <View style={{ marginTop: 30, marginBottom: 20 }}>
+        <Button title="🚀 Publish Quiz" onPress={handlePublish} />
+      </View>
 
       <Modal visible={showModal} animationType="slide">
         <View style={styles.modal}>
@@ -301,6 +199,22 @@ export default function CreateQuestions() {
           </View>
         </View>
       </Modal>
+      <Modal visible={successModalVisible} transparent animationType="fade">
+  <View style={styles.overlay}>
+    <View style={styles.successPopup}>
+      <Text style={styles.successTitle}>✅ Success!</Text>
+      <Text style={styles.successMessage}>Your quiz has been published.</Text>
+
+      <Text style={{ fontWeight: 'bold', marginTop: 10 }}>Quiz Code:</Text>
+      <TouchableOpacity onPress={handleCopy}>
+        <Text style={styles.codeText}>{generatedCode}</Text>
+        <Text style={styles.copyHint}>Tap to copy</Text>
+      </TouchableOpacity>
+
+      <Button title="Close" onPress={() => setSuccessModalVisible(false)} />
+    </View>
+  </View>
+</Modal>
     </View>
   );
 }
@@ -308,6 +222,7 @@ export default function CreateQuestions() {
 const styles = StyleSheet.create({
   container: { padding: 20, paddingTop: 60, flex: 1 },
   title: { fontSize: 22, marginBottom: 20, textAlign: "center", fontWeight: "bold" },
+  input: { borderWidth: 1, padding: 10, borderRadius: 5, marginBottom: 20 },
   questionItem: {
     borderWidth: 1, borderColor: "#ddd", padding: 12, borderRadius: 8,
     marginBottom: 12, backgroundColor: "#f9f9f9", flexDirection: "row"
@@ -316,9 +231,44 @@ const styles = StyleSheet.create({
   qButtons: { justifyContent: "space-between", marginLeft: 10 },
   modal: { padding: 20, paddingTop: 60, flex: 1 },
   modalTitle: { fontSize: 20, marginBottom: 20, textAlign: "center", fontWeight: "bold" },
-  input: { borderWidth: 1, padding: 10, borderRadius: 5, marginBottom: 20 },
   optionRow: { flexDirection: "row", alignItems: "center", marginBottom: 10 },
   optionInput: { borderWidth: 1, padding: 10, flex: 1, borderRadius: 5 },
   radio: { fontSize: 24, marginLeft: 10 },
   modalButtons: { marginTop: 30, flexDirection: "row", justifyContent: "space-between" },
+overlay: {
+  flex: 1,
+  backgroundColor: 'rgba(0,0,0,0.5)',
+  justifyContent: 'center',
+  alignItems: 'center',
+},
+successPopup: {
+  backgroundColor: '#fff',
+  padding: 20,
+  borderRadius: 10,
+  width: '80%',
+  alignItems: 'center',
+},
+successTitle: {
+  fontSize: 20,
+  fontWeight: 'bold',
+  marginBottom: 10,
+},
+successMessage: {
+  fontSize: 16,
+  textAlign: 'center',
+},
+codeText: {
+  fontSize: 18,
+  marginVertical: 10,
+  backgroundColor: '#f0f0f0',
+  padding: 10,
+  borderRadius: 8,
+  textAlign: 'center',
+},
+copyHint: {
+  fontSize: 12,
+  color: 'gray',
+  textAlign: 'center',
+  marginBottom: 10,
+},
 });

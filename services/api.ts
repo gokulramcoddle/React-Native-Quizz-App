@@ -10,7 +10,7 @@ const api = axios.create({
 });
 
 // 🔐 Get token from secure store before making API calls
-const getStoredToken = async (): Promise<string | null> => {
+export const getStoredToken = async (): Promise<string | null> => {
   try {
     return await SecureStore.getItemAsync(TOKEN_KEY);
   } catch (err) {
@@ -78,7 +78,6 @@ export const apiRequest = async ({
     const response = await api(config);
     return response.data;
   } catch (error: any) {
-    console.log("env creden...",process.env.EXPO_PUBLIC_SUPABASE_URL)
     if (error.response?.status === 401) {
       // handle token expiry if needed
     }
