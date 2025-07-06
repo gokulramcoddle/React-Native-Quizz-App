@@ -74,3 +74,49 @@ export const createQuizz = async ( title: string, user_id: number) => {
 
   return res;
 }
+
+export const getQuizzQuestions = async ( code: string, page: number, limit: number) => {
+  const res = await apiRequest({
+    method: 'GET',
+    url: `/quizz/code/${code}?page=${page}&limit=${limit}`,
+    withAuth: false,
+  })
+  return res;
+}
+
+export const submitQuizResult = async ({
+  name,
+  email,
+  score,
+  total_questions,
+  quizz_id,
+}: {
+  name: string;
+  email: string;
+  score: number;
+  total_questions: number;
+  quizz_id: number;
+}) => {
+  return await apiRequest({
+    method: 'POST',
+    url: '/quizz/submit',
+    data: {
+      name,
+      email,
+      score,
+      total_questions,
+      quizz_id,
+    },
+    withAuth: false,
+  });
+};
+
+export const isValid = async(code: string) => {
+const res = await apiRequest({
+  method: 'POST',
+  url: '/quizz/isvalid',
+  data: { code },
+  withAuth: false,
+ })
+ return res;
+}

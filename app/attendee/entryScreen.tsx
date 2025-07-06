@@ -1,24 +1,37 @@
-import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
-import { useState } from 'react';
+import { isValid } from '@/services/apiService';
 import { router } from 'expo-router';
+import { useState } from 'react';
+import { Button, StyleSheet, Text, TextInput, View, ActivityIndicator } from 'react-native';
 
 export default function AttendInfoScreen() {
-  const [form, setForm] = useState({ code: '', name: '', email: '' });
+  const [form, setForm] = useState({ code: 'X_drL4', name: '', email: '' });
   const [errors, setErrors] = useState({ code: '', name: '', email: '' });
+  const [loading, setLoading] = useState(false); //Add loading state
 
   const handleChange = (key: 'code' | 'name' | 'email', value: string) => {
     setForm((prev) => ({ ...prev, [key]: value }));
     setErrors((prev) => ({ ...prev, [key]: '' }));
   };
 
-  const validate = () => {
+  const validate = async () => {
     let valid = true;
     const newErrors = { code: '', name: '', email: '' };
 
-    
     if (!form.code.trim()) {
       newErrors.code = 'Code is required';
       valid = false;
+    } else {
+      try {
+        
+        const res = await isValid(form.code);
+        if (!res.success) {
+          newErrors.code = 'Invalid code';
+          valid = false;
+        }
+      } catch (error: any) {
+        newErrors.code = `${error.message}`;
+        valid = false;
+      }
     }
 
     if (!form.name.trim()) {
@@ -38,20 +51,29 @@ export default function AttendInfoScreen() {
     return valid;
   };
 
-  const handleStart = () => {
-    if (!validate()) return;
+  const handleStart = async () => {
+    setLoading(true); // Start loading
+    const isValidForm = await validate();
+    if (!isValidForm) {
+      setLoading(false); // stop loading if invalid
+      return;
+    }
 
-    // Optionally store name/email in storage or context here
-
-    // Redirect to quiz code input or quiz screen
-    router.push('/attendee/entryScreen'); // change this to your actual route
+    router.push({
+      pathname: '/attendee/questionsScreen',
+      params: {
+        code: form.code,
+        name: form.name,
+        email: form.email,
+      },
+    });
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Enter Your Details</Text>
 
-<TextInput
+      <TextInput
         placeholder="Code"
         style={styles.input}
         value={form.code}
@@ -76,7 +98,13 @@ export default function AttendInfoScreen() {
       />
       {errors.email ? <Text style={styles.error}>{errors.email}</Text> : null}
 
-      <Button title="Start" onPress={handleStart} />
+      {loading ? (
+        <View style={styles.loadingWrapper}>
+          <ActivityIndicator size="small" color="#007AFF" />
+        </View>
+      ) : (
+        <Button title="Start" onPress={handleStart} disabled={loading} />
+      )}
     </View>
   );
 }
@@ -102,5 +130,9 @@ const styles = StyleSheet.create({
   error: {
     color: 'red',
     marginBottom: 8,
+  },
+  loadingWrapper: {
+    marginTop: 10,
+    alignItems: 'center',
   },
 });
