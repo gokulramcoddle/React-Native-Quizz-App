@@ -30,6 +30,7 @@ const styles = StyleSheet.create({
     fontWeight: "500",
     marginBottom: 20,
     textAlign: "center",
+    color: "white",
   },
   buttons: {
     flexDirection: "column",
