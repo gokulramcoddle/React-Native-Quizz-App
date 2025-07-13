@@ -1,3 +1,4 @@
+import AppButton from "@/components/AppButton";
 import { loginUser } from "@/services/apiService";
 import { Link, router } from "expo-router";
 import { useState } from "react";
@@ -76,8 +77,8 @@ export default function Login() {
       />
       {errors.password ? <Text style={styles.error}>{errors.password}</Text> : null}
 
-      <Button title="Login" onPress={handleLogin} />
-      <Text>
+      <AppButton title="Login" onPress={handleLogin} />
+      <Text style={styles.message}>
   Don’t have an account?{' '}
   <Text style={styles.link} onPress={() => router.replace('/auth/Signup')}>
     Sign up
@@ -94,22 +95,32 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    fontSize: 24,
-    marginBottom: 20,
+    color: "white",
+   fontWeight: "700",
+    fontSize: 28,
+    marginBottom: 25,
     textAlign: "center",
   },
   input: {
+    borderColor: '#a811bfff',
+    color: "white",
     borderWidth: 1,
     padding: 10,
-    marginBottom: 8,
+    marginBottom: 15,
     borderRadius: 5,
   },
   error: {
     color: "red",
     marginBottom: 10,
   },
+  message: {
+   textAlign: "center",
+   color: "white",
+    marginTop: 15,
+  },
+
   link: {
-    color: 'blue',
+    color: '#a811bfff',
     textDecorationLine: 'underline',
   },
 });

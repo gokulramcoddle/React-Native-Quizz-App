@@ -1,3 +1,5 @@
+import AppButton from '@/components/AppButton';
+import AppText from '@/components/AppText';
 import { isValid } from '@/services/apiService';
 import { router } from 'expo-router';
 import { useState } from 'react';
@@ -71,7 +73,7 @@ export default function AttendInfoScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Enter Your Details</Text>
+      <AppText style={styles.title}>Enter Your Details</AppText>
 
       <TextInput
         placeholder="Code"
@@ -103,7 +105,7 @@ export default function AttendInfoScreen() {
           <ActivityIndicator size="small" color="#007AFF" />
         </View>
       ) : (
-        <Button title="Start" onPress={handleStart} disabled={loading} />
+        <AppButton title="Start" variant='primary' onPress={handleStart} disabled={loading} />
       )}
     </View>
   );
@@ -122,6 +124,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   input: {
+    color: "white",
+    borderColor: '#a811bfff',
     borderWidth: 1,
     padding: 12,
     marginBottom: 12,
@@ -135,4 +139,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     alignItems: 'center',
   },
+  // startBtn: {
+  //  backgroundColor: "#a811bfff",
+  // },
 });

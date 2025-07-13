@@ -1,3 +1,4 @@
+import AppButton from '@/components/AppButton';
 import { signUpUser } from '@/services/apiService';
 import { Link, router } from 'expo-router';
 import { useState } from 'react';
@@ -81,8 +82,8 @@ const handleSignup = async () => {
       />
       {errors.password ? <Text style={styles.error}>{errors.password}</Text> : null}
 
-      <Button title="Sign Up" onPress={handleSignup} />
-       <Text>
+      <AppButton title="Sign Up" onPress={handleSignup} />
+       <Text style={styles.message}>
   Already have an account?{" "}
   <Text style={styles.link} onPress={() => router.replace("/auth/Login")}>
     Login
@@ -95,26 +96,36 @@ const handleSignup = async () => {
 const styles = StyleSheet.create({
   container: {
     padding: 20,
-    justifyContent: 'center',
+    justifyContent: "center",
     flex: 1,
   },
   header: {
-    fontSize: 24,
-    marginBottom: 20,
-    textAlign: 'center',
+    color: "white",
+    fontWeight: "700",
+    fontSize: 28,
+    marginBottom: 25,
+    textAlign: "center",
   },
   input: {
+    borderColor: '#a811bfff',
+    color: "white",
     borderWidth: 1,
     padding: 10,
-    marginBottom: 8,
+    marginBottom: 15,
     borderRadius: 5,
   },
   error: {
-    color: 'red',
+    color: "red",
     marginBottom: 10,
   },
-   link: {
-    color: 'blue',
+  message: {
+   textAlign: "center",
+   color: "white",
+    marginTop: 15,
+  },
+  
+  link: {
+    color: '#a811bfff',
     textDecorationLine: 'underline',
   },
 });
