@@ -1,23 +1,25 @@
 import { apiRequest, saveToken } from './api';
-import { saveUser } from './authenticatedUser';
+import { clearUser, saveUser } from './authenticatedUser';
 
 export const loginUser = async (email: string, password: string) => {
-  const data = await apiRequest({
-    method: 'POST',
-    url: '/auth/login',
-    data: { email, password },
-    withAuth: false,
-  });
+  try {
+    const data = await apiRequest({ method: 'POST', url: '/auth/login', data: { email, password } });
+    console.log('[login] API response:', data);
 
-  if (data?.token) {
-    await saveToken(data.token);
-  }
+    if (data?.token) await saveToken(data.token);
+    if (data?.user) {
+      const { password: _omit, ...safeUser } = data.user;
+      await saveUser(safeUser);
+      
+console.log('[login] saved user', safeUser);    }
 
-  if(data?.user){
-    await saveUser(data.user);
-  }
-  return {message: data.message,success: data.success, userName: data?.user?.name};
+    return data;
+  } catch (err) {
+    console.error('[login] error', err);
+    throw err;
+  } 
 };
+
 
 
 export const signUpUser = async (
@@ -29,7 +31,6 @@ export const signUpUser = async (
     method: 'POST',
     url: '/auth/signup',
     data: { name, email, password },
-    withAuth: false, // Signup doesn't need token
   });
 
   return response;
@@ -56,7 +57,6 @@ export const createQuestion = async (data: CreateQuestionPayload) => {
       text: data.text,
       options: data.options,
     },
-    withAuth: false,
   });
 
   return res;
@@ -69,7 +69,6 @@ export const createQuizz = async ( title: string, user_id: number) => {
     data: {
       title, user_id
     },
-    withAuth: true,
   })
 
   return res;
@@ -79,7 +78,6 @@ export const getQuizzQuestions = async ( code: string, page: number, limit: numb
   const res = await apiRequest({
     method: 'GET',
     url: `/quizz/code/${code}?page=${page}&limit=${limit}`,
-    withAuth: false,
   })
   return res;
 }
@@ -107,7 +105,6 @@ export const submitQuizResult = async ({
       total_questions,
       quizz_id,
     },
-    withAuth: false,
   });
 };
 
@@ -116,7 +113,18 @@ const res = await apiRequest({
   method: 'POST',
   url: '/quizz/isvalid',
   data: { code },
-  withAuth: false,
  })
  return res;
+}
+
+export const getUserQuizz = async (userId: number) => {
+ try{
+   const res = await apiRequest({
+    method: 'GET',
+    url: `/quizz/${userId}`,
+  })
+  return res;
+} catch (err) {
+  console.error('Failed to load');
+}
 }

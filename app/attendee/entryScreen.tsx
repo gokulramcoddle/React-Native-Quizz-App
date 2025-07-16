@@ -74,7 +74,8 @@ export default function AttendInfoScreen() {
   return (
     <View style={styles.container}>
       <AppText style={styles.title}>Enter Your Details</AppText>
-
+      
+      <Text style={styles.text}>Code:</Text>
       <TextInput
         placeholder="Code"
         style={styles.input}
@@ -83,6 +84,7 @@ export default function AttendInfoScreen() {
       />
       {errors.code ? <Text style={styles.error}>{errors.code}</Text> : null}
 
+      <Text style={styles.text}>Name:</Text>
       <TextInput
         placeholder="Name"
         style={styles.input}
@@ -91,6 +93,7 @@ export default function AttendInfoScreen() {
       />
       {errors.name ? <Text style={styles.error}>{errors.name}</Text> : null}
 
+      <Text style={styles.text}>Email:</Text>
       <TextInput
         placeholder="Email"
         style={styles.input}
@@ -130,6 +133,9 @@ const styles = StyleSheet.create({
     padding: 12,
     marginBottom: 12,
     borderRadius: 8,
+  },
+   text: {
+    color: '#a811bfff'
   },
   error: {
     color: 'red',

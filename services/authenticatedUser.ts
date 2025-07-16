@@ -4,7 +4,8 @@ const USER_KEY = 'auth_user';
 
 export const saveUser = async (user: any) => {
   try {
-    await SecureStore.setItemAsync(USER_KEY, JSON.stringify(user));
+    const { password, ...safe } = user;
+    await SecureStore.setItemAsync(USER_KEY, JSON.stringify(safe));
   } catch (err) {
     console.error('Failed to save user:', err);
   }

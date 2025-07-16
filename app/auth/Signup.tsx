@@ -56,7 +56,7 @@ const handleSignup = async () => {
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Create Account</Text>
-
+       <Text style={styles.text}>Name:</Text>
       <TextInput
         placeholder="Name"
         value={form.name}
@@ -64,7 +64,8 @@ const handleSignup = async () => {
         style={styles.input}
       />
       {errors.name ? <Text style={styles.error}>{errors.name}</Text> : null}
-
+   
+      <Text style={styles.text}>Email:</Text>
       <TextInput
         placeholder="Email"
         value={form.email}
@@ -73,6 +74,7 @@ const handleSignup = async () => {
       />
       {errors.email ? <Text style={styles.error}>{errors.email}</Text> : null}
 
+      <Text style={styles.text}>Password:</Text>
       <TextInput
         placeholder="Password"
         value={form.password}
@@ -105,6 +107,9 @@ const styles = StyleSheet.create({
     fontSize: 28,
     marginBottom: 25,
     textAlign: "center",
+  },
+  text: {
+    color: '#a811bfff'
   },
   input: {
     borderColor: '#a811bfff',

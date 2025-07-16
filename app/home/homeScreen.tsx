@@ -9,7 +9,40 @@ import {
 } from 'react-native';
 import { router } from 'expo-router';
 import AppButton from '@/components/AppButton';
+import { clearToken } from '@/services/api';
+import { clearUser } from '@/services/authenticatedUser';
+ import { Alert } from 'react-native'; 
+
 export default function HomeScreen() {
+
+
+const handleLogout = () => {
+  Alert.alert(
+    'Confirm Logout',
+    'Are you sure you want to log out?',
+    [
+      {
+        text: 'Cancel',
+        style: 'cancel',
+      },
+      {
+        text: 'Logout',
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            await Promise.all([clearToken(), clearUser()]);
+            router.replace('/');
+          } catch (err) {
+            console.error('Failed to log out:', err);
+          }
+        },
+      },
+    ],
+    { cancelable: true }
+  );
+};
+
+
   return (
     <SafeAreaView style={styles.safe}>     
       <StatusBar barStyle="light-content" />
@@ -27,10 +60,12 @@ export default function HomeScreen() {
       >
         {/* Primary creator action */}
         <AppButton title="Create Quiz" onPress={() => router.push('/creator/createQuestion')} />
-        <AppButton title="My Quizzes" onPress={() => router.push('/')} />
-
+        <AppButton title="My Quizzes" onPress={() => router.push('/home/myQuizzScreen')} />
+        <AppButton
+            title="<-- Go to Home"
+           onPress={() => router.replace('/?skipAuthCheck=true')} />
         {/* Danger zone */}
-       <AppButton style= {styles.logoutBtn} title='Log out' onPress={() => router.replace('/')} />
+       <AppButton style= {styles.logoutBtn} title='Log out' onPress={handleLogout} />
       </ScrollView>
     </SafeAreaView>
   );

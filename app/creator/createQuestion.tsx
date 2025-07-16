@@ -94,6 +94,7 @@ const [generatedCode, setGeneratedCode] = useState<string | null>(null);
 
   try {
     const userData = await getUser();
+    console.log("user", userData);
     if (!userData?.id) {
       throw new Error("User not found");
     }
@@ -139,7 +140,7 @@ setSuccessModalVisible(true);
 
       <Button title="+ Add Question" onPress={() => { resetForm(); setShowModal(true); }} />
 
-      <ScrollView style={{ marginTop: 20 }}>
+      <ScrollView style={{ marginTop: 20, flex: 1}} showsVerticalScrollIndicator={false}>
         {questions.map((q, index) => (
           <View key={index} style={styles.questionItem}>
             <View style={{ flex: 1 }}>

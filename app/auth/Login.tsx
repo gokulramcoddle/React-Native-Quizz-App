@@ -43,8 +43,8 @@ export default function Login() {
     if (!response) {
       Alert.alert("Login Failed", "Invalid email or password");
     } else {
-      Alert.alert("Login Successful", `Welcome ${response?.userName}`);
-      router.push('/creator/createQuestion');
+      Alert.alert("Login Successful", `Welcome ${response?.user.name}`);
+      router.replace('/home/homeScreen');
       
       // Navigate to the next screen here if needed
     }
@@ -57,8 +57,8 @@ export default function Login() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Login</Text>
-
+     <Text style={styles.header}>Login</Text>
+      <Text style={styles.text}>Email:</Text>
       <TextInput
         placeholder="Email"
         value={form.email}
@@ -67,7 +67,8 @@ export default function Login() {
         keyboardType="email-address"
       />
       {errors.email ? <Text style={styles.error}>{errors.email}</Text> : null}
-
+      
+      <Text style={styles.text}>Password:</Text>
       <TextInput
         placeholder="Password"
         value={form.password}
@@ -93,6 +94,9 @@ const styles = StyleSheet.create({
     padding: 20,
     justifyContent: "center",
     flex: 1,
+  },
+  text: {
+    color: '#a811bfff'
   },
   header: {
     color: "white",
