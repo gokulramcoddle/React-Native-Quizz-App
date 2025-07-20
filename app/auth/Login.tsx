@@ -40,7 +40,7 @@ export default function Login() {
   try {
     const response = await loginUser(form.email, form.password);
 
-    if (!response) {
+    if (response.error) {
       Alert.alert("Login Failed", "Invalid email or password");
     } else {
       Alert.alert("Login Successful", `Welcome ${response?.user.name}`);
@@ -49,7 +49,6 @@ export default function Login() {
       // Navigate to the next screen here if needed
     }
   } catch (err) {
-    console.error("Unexpected error:", err);
     Alert.alert("Error", "Something went wrong. Please try again.");
   }
 };

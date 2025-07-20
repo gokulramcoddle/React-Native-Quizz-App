@@ -1,6 +1,7 @@
-import { View, StyleSheet, ActivityIndicator } from "react-native";
-import { router, useLocalSearchParams } from "expo-router";
-import { useEffect, useState } from "react";
+import { useFocusEffect } from "@react-navigation/native";
+import { View, StyleSheet, ActivityIndicator, Alert } from "react-native";
+import { router } from "expo-router";
+import { useState, useCallback } from "react";
 import { getStoredToken } from "@/services/api";
 import { getUser } from "@/services/authenticatedUser";
 import AppButton from "@/components/AppButton";
@@ -9,26 +10,29 @@ import AppText from "@/components/AppText";
 export default function Index() {
   const [checkingAuth, setCheckingAuth] = useState(true);
   const [isCreator, setIsCreator] = useState(false);
-  const { skipAuthCheck } = useLocalSearchParams();
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      const token = await getStoredToken();
-      const user = await getUser();
-
-      if (token && user) {
-        setIsCreator(true);
-        if (skipAuthCheck !== 'true') {
-          router.replace("/home/homeScreen");
-          return;
+  useFocusEffect(
+    useCallback(() => {
+      const checkAuth = async () => {
+        try {
+          const token = await getStoredToken();
+          const user = await getUser();
+          if (token && user) {
+            setIsCreator(true);
+          } else {
+            setIsCreator(false);
+          }
+        } catch (err: any) {
+          Alert.alert("Auth Error", err.message || "Something went wrong");
+        } finally {
+          setCheckingAuth(false);
         }
-      }
+      };
 
-      setCheckingAuth(false);
-    };
-
-    checkAuth();
-  }, []);
+      setCheckingAuth(true); // show loader again on re-focus
+      checkAuth();
+    }, [])
+  );
 
   if (checkingAuth) {
     return (
@@ -62,6 +66,7 @@ export default function Index() {
     </View>
   );
 }
+
 
 
 const styles = StyleSheet.create({

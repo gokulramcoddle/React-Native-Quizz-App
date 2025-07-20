@@ -12,6 +12,8 @@ import AppButton from '@/components/AppButton';
 import { clearToken } from '@/services/api';
 import { clearUser } from '@/services/authenticatedUser';
  import { Alert } from 'react-native'; 
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import AppText from '@/components/AppText';
 
 export default function HomeScreen() {
 
@@ -49,7 +51,7 @@ const handleLogout = () => {
 
       {/* Hero banner */}
       <View style={styles.heroWrapper}>
-        <Text style={styles.title}>Quiz Creator 🛠️</Text>
+       <AppText style={styles.title}>Quiz {"\n"}Creator</AppText>
         <Text style={styles.subtitle}>Design, publish, and track your quizzes effortlessly.</Text>
       </View>
 
@@ -62,7 +64,7 @@ const handleLogout = () => {
         <AppButton title="Create Quiz" onPress={() => router.push('/creator/createQuestion')} />
         <AppButton title="My Quizzes" onPress={() => router.push('/home/myQuizzScreen')} />
         <AppButton
-            title="<-- Go to Home"
+            title="<< Back"
            onPress={() => router.replace('/?skipAuthCheck=true')} />
         {/* Danger zone */}
        <AppButton style= {styles.logoutBtn} title='Log out' onPress={handleLogout} />
@@ -72,13 +74,12 @@ const handleLogout = () => {
 }
 
 const WHITE = '#FFFFFF';
-const DARK_BG = '#1E1E24';
 const GRAY = '#9CA3AF';
 
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: DARK_BG,
+    backgroundColor: 'transparent',
   },
   heroWrapper: {
     alignItems: 'center',
@@ -86,9 +87,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   title: {
-    marginTop: 12,
-    fontSize: 32,
-    fontWeight: '700',
+    marginTop: 100,
+    fontSize: 65,
+    fontWeight: '900',
     color: WHITE,
     textAlign: 'center',
   },

@@ -3,22 +3,26 @@ import { clearUser, saveUser } from './authenticatedUser';
 
 export const loginUser = async (email: string, password: string) => {
   try {
-    const data = await apiRequest({ method: 'POST', url: '/auth/login', data: { email, password } });
-    console.log('[login] API response:', data);
+    const data = await apiRequest({
+      method: 'POST',
+      url: '/auth/login',
+      data: { email, password },
+    });
 
     if (data?.token) await saveToken(data.token);
     if (data?.user) {
       const { password: _omit, ...safeUser } = data.user;
       await saveUser(safeUser);
-      
-console.log('[login] saved user', safeUser);    }
+    }
 
     return data;
-  } catch (err) {
+  } catch (err: any) {
     console.error('[login] error', err);
-    throw err;
-  } 
+    return err.response?.data || { error: 'Unknown error' };
+  }
 };
+
+
 
 
 

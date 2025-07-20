@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { getQuizzQuestions, submitQuizResult } from '@/services/apiService';
+import AppButton from '@/components/AppButton';
 
 interface Option {
   id: number;
@@ -119,9 +120,21 @@ const QuizScreen = () => {
     return (
       <View style={styles.centered}>
         <Text style={styles.title}>Quiz Completed!</Text>
-        <Text style={styles.scoreText}>
-          Your Score: {score} / {quizData.total_questions}
-        </Text>
+        <Text
+  style={[
+    styles.scoreText,
+    {
+      color:
+        Number(score) / Number(quizData.total_questions) >= 0.45
+          ? 'green'
+          : 'red',
+    },
+  ]}
+>
+  Your Score: {score} / {quizData.total_questions}
+</Text>
+
+
       </View>
     );
   }
@@ -146,7 +159,7 @@ const QuizScreen = () => {
       })}
 
       <View style={styles.buttonRow}>
-        <Button
+        <AppButton
           title="Previous"
           disabled={page === 1}
           onPress={() => setPage((prev) => prev - 1)}
@@ -155,14 +168,14 @@ const QuizScreen = () => {
           {page} / {quizData.total_questions}
         </Text>
         {page < quizData.total_questions ? (
-  <Button title="Next" onPress={() => setPage((prev) => prev + 1)} />
+  <AppButton title="Next" onPress={() => setPage((prev) => prev + 1)} />
     ) : (
      loading ? (
        <View style={styles.loadingWrapper}>
         <ActivityIndicator size="small" color="#007AFF" />
        </View>
     ) : (
-       <Button title="Submit" onPress={handleSubmit} disabled={loading} />
+       <AppButton title="Submit" onPress={handleSubmit} disabled={loading} />
        )
     )}
       </View>
@@ -184,14 +197,17 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   title: {
-    fontSize: 22,
+    fontSize: 40,
+    color: 'white',
     fontWeight: 'bold',
     marginBottom: 20,
     marginTop: 100,
     textAlign: 'center',
   },
   questionText: {
-    fontSize: 18,
+    color: '#a811bfff',
+    fontSize: 20,
+    fontWeight:'600',
     marginBottom: 20,
     marginTop: 50,
   },
@@ -202,10 +218,11 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   selectedOption: {
-    backgroundColor: '#60a5fa',
+    backgroundColor: '#da76e9ff',
   },
   optionText: {
     fontSize: 16,
+    fontWeight: 'bold',
   },
   buttonRow: {
     flexDirection: 'row',
@@ -217,7 +234,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   scoreText: {
-    fontSize: 20,
+    fontSize: 25,
     fontWeight: '600',
     marginTop: 20,
   },

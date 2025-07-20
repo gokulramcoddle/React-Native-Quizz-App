@@ -1,5 +1,6 @@
 import { getUser } from "@/services/authenticatedUser";
 import { createQuestion, createQuizz } from "@/services/apiService";
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import * as Clipboard from 'expo-clipboard';
 import React, { useState } from "react";
 import {
@@ -13,6 +14,8 @@ import {
   ScrollView,
   Alert,
 } from "react-native";
+import AppText from "@/components/AppText";
+import AppButton from "@/components/AppButton";
 
 export default function CreateQuestions() {
   const [quizTitle, setQuizTitle] = useState("");
@@ -129,8 +132,8 @@ setSuccessModalVisible(true);
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Create Quiz</Text>
-      <Text>Quizz Title:</Text>
+      <AppText style={styles.title}>Create Quiz</AppText>
+      <Text style={{color: '#a811bfff',fontWeight: 700}}>Quizz Title:</Text>
       <TextInput
         placeholder="Enter Quiz Title"
         value={quizTitle}
@@ -138,7 +141,7 @@ setSuccessModalVisible(true);
         style={styles.input}
       />
 
-      <Button title="+ Add Question" onPress={() => { resetForm(); setShowModal(true); }} />
+      <AppButton title="+ Add Question" onPress={() => { resetForm(); setShowModal(true); }} />
 
       <ScrollView style={{ marginTop: 20, flex: 1}} showsVerticalScrollIndicator={false}>
         {questions.map((q, index) => (
@@ -146,34 +149,51 @@ setSuccessModalVisible(true);
             <View style={{ flex: 1 }}>
               <Text style={styles.questionText}>{index + 1}. {q.text}</Text>
               {q.options.map((o: any, i: number) => (
-                <Text key={i} style={{ marginLeft: 10 }}>
-                  {o.is_correct ? "✅" : "▫️"} {o.text}
-                </Text>
-              ))}
+  <View key={i} style={{ flexDirection: 'row', alignItems: 'center', marginVertical: 6 }}>
+    <View
+      style={[
+        styles.optionCircle,
+        o.is_correct && styles.optionCircleCorrect
+      ]}
+    >
+      <Text style={[styles.optionNumber, o.is_correct && styles.optionNumberCorrect]}>
+        {i + 1}
+      </Text>
+    </View>
+    <Text style={styles.optionText}>{o.text}</Text>
+  </View>
+))}
             </View>
             <View style={styles.qButtons}>
-              <Button title="✏️" onPress={() => handleEdit(index)} />
-              <Button title="🗑️" color="red" onPress={() => handleDelete(index)} />
-            </View>
+  <TouchableOpacity onPress={() => handleEdit(index)}>
+    <Icon name="edit" size={34} color="#007bffff" />
+  </TouchableOpacity>
+
+ <TouchableOpacity onPress={() => handleDelete(index)}>
+    <Icon name="delete" size={34} color="#ff0000ff" />
+  </TouchableOpacity>
+
+</View>
+
           </View>
         ))}
       </ScrollView>
 
       <View style={{ marginTop: 30, marginBottom: 20 }}>
-        <Button title="🚀 Publish Quiz" onPress={handlePublish} />
+        <AppButton title="🚀 Publish Quiz" onPress={handlePublish} />
       </View>
 
       <Modal visible={showModal} animationType="slide">
         <View style={styles.modal}>
           <Text style={styles.modalTitle}>{editIndex !== null ? "Edit Question" : "New Question"}</Text>
-
+          <AppText style={{color: '#a811bfff',fontWeight: 700}}>Enter Question:</AppText>
           <TextInput
             placeholder="Enter question text"
             value={questionText}
             onChangeText={setQuestionText}
             style={styles.input}
           />
-
+          <AppText style={{color: '#a811bfff',fontWeight: 700}}>Options:</AppText>
           {options.map((opt, i) => (
             <View key={i} style={styles.optionRow}>
               <TextInput
@@ -186,17 +206,24 @@ setSuccessModalVisible(true);
                 placeholder={`Option ${i + 1}`}
                 style={styles.optionInput}
               />
-              <TouchableOpacity onPress={() => setCorrectIndex(i)}>
-                <Text style={styles.radio}>
-                  {correctIndex === i ? "🔘" : "⚪"}
-                </Text>
-              </TouchableOpacity>
+              <TouchableOpacity
+  onPress={() => setCorrectIndex(i)}
+  style={styles.radioWrapper}
+  activeOpacity={0.7}
+>
+  <Icon
+    name={correctIndex === i ? 'radio-button-checked' : 'radio-button-unchecked'}
+    size={25}
+    color={correctIndex === i ? '#a811bfff' : '#888'}
+  />
+</TouchableOpacity>
+
             </View>
           ))}
 
           <View style={styles.modalButtons}>
-            <Button title="Cancel" onPress={() => { setShowModal(false); resetForm(); }} />
-            <Button title="Save" onPress={handleSave} />
+            <AppButton title="Cancel" onPress={() => { setShowModal(false); resetForm(); }} />
+            <AppButton title="Save" onPress={handleSave} />
           </View>
         </View>
       </Modal>
@@ -223,17 +250,17 @@ setSuccessModalVisible(true);
 const styles = StyleSheet.create({
   container: { padding: 20, paddingTop: 60, flex: 1 },
   title: { fontSize: 22, marginBottom: 20, textAlign: "center", fontWeight: "bold" },
-  input: { borderWidth: 1, padding: 10, borderRadius: 5, marginBottom: 20 },
+  input: {color: 'white', borderWidth: 1, padding: 10, borderRadius: 5, marginBottom: 20, borderColor: '#a811bfff', },
   questionItem: {
     borderWidth: 1, borderColor: "#ddd", padding: 12, borderRadius: 8,
     marginBottom: 12, backgroundColor: "#f9f9f9", flexDirection: "row"
   },
   questionText: { fontWeight: "bold", marginBottom: 4 },
   qButtons: { justifyContent: "space-between", marginLeft: 10 },
-  modal: { padding: 20, paddingTop: 60, flex: 1 },
-  modalTitle: { fontSize: 20, marginBottom: 20, textAlign: "center", fontWeight: "bold" },
+  modal: { padding: 20, justifyContent: "center", flex: 1,backgroundColor: '#0b0a2f' },
+  modalTitle: { color: 'white',fontSize: 26, marginBottom: 20, textAlign: "center", fontWeight: "bold" },
   optionRow: { flexDirection: "row", alignItems: "center", marginBottom: 10 },
-  optionInput: { borderWidth: 1, padding: 10, flex: 1, borderRadius: 5 },
+  optionInput: { color: 'white' ,borderColor: '#a811bfff',borderWidth: 1, padding: 10, flex: 1, borderRadius: 5 },
   radio: { fontSize: 24, marginLeft: 10 },
   modalButtons: { marginTop: 30, flexDirection: "row", justifyContent: "space-between" },
 overlay: {
@@ -272,4 +299,34 @@ copyHint: {
   textAlign: 'center',
   marginBottom: 10,
 },
+ radioWrapper: {
+  marginRight: 8,
+  padding: 4,
+  justifyContent: 'center',
+  alignItems: 'center',
+},
+optionCircle: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: '#c3c3c3ff',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 10,
+  },
+  optionCircleCorrect: {
+    backgroundColor: '#4CAF50', // green for correct
+  },
+  optionNumber: {
+    color: '#000',
+    fontWeight: 'bold',
+  },
+  optionNumberCorrect: {
+    color: '#fff',
+  },
+  optionText: {
+    fontSize: 16,
+    flexShrink: 1,
+  },
+
 });

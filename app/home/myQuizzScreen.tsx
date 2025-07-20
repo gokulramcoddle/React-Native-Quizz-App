@@ -46,8 +46,8 @@ export default function MyQuizz() {
         {quizzes.length > 0 ? (quizzes.map((quiz) => (
           <TouchableOpacity key={quiz.id} style={styles.card} activeOpacity={0.8}>
             <Text style={styles.quizTitle}>{quiz.title}</Text>
-            <Text style={styles.quizInfo}> Total Questions: {quiz.questions}</Text>
-            <Text style={styles.quizInfo}>Code: {quiz.code}</Text>
+            <Text style={styles.quizCode}>Code: {quiz.code}</Text>
+            <Text style={styles.quizInfo}>Total Questions: {quiz.questions}</Text>
             <Text style={styles.quizDate}>
               Created on {new Date(quiz.createdAt).toLocaleDateString()}
             </Text>
@@ -67,15 +67,17 @@ export default function MyQuizz() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f4f6fa',
+    backgroundColor: 'transparent',
     paddingTop: 50,
     paddingHorizontal: 20,
   },
   title: {
-    fontSize: 28,
+    fontSize: 48,
+    marginTop: 30,
+    textAlign: 'center',
     fontWeight: 'bold',
     marginBottom: 20,
-    color: '#1e1e1e',
+    color: '#ffffffff',
   },
   scrollContainer: {
     flex: 1,
@@ -84,29 +86,29 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
   card: {
-    backgroundColor: '#ffffff',
+    backgroundColor: '#a811bfff',
     borderRadius: 12,
     padding: 16,
     marginBottom: 15,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    elevation: 3,
   },
   quizTitle: {
-    fontSize: 18,
+    fontSize: 25,
     fontWeight: '600',
     marginBottom: 4,
-    color: '#333',
+    color: '#ffffffff',
   },
   quizInfo: {
-    fontSize: 14,
-    color: '#666',
+    fontSize: 16,
+    color: 'white',
+  },
+  quizCode: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: 'white',
   },
   quizDate: {
     fontSize: 12,
-    color: '#999',
+    color: 'white',
     marginTop: 4,
   },
 });

@@ -61,7 +61,7 @@ export default function AttendInfoScreen() {
       return;
     }
 
-    router.push({
+    router.replace({
       pathname: '/attendee/questionsScreen',
       params: {
         code: form.code,
