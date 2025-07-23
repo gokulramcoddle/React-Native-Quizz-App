@@ -12,7 +12,9 @@
       "distribution": "internal",
       "android": {
         "buildType": "apk"
-      }
+      }, "env": {
+        "EXPO_PUBLIC_API_BASE_URL": "https://quizz-api-bm5f.onrender.com/api"
+      },
     },
     "production": {
       "env": {
