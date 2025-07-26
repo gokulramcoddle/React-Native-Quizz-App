@@ -83,11 +83,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   title: {
-    fontSize: 70,
-    fontWeight: "500",
+    fontSize: 90,
+    fontWeight: "bold",
     marginBottom: 20,
     textAlign: "center",
-    fontFamily: "Inter-Bold",
   },
   buttons: {
     flexDirection: "column",

@@ -1,5 +1,5 @@
 import { apiRequest, saveToken } from './api';
-import { clearUser, saveUser } from './authenticatedUser';
+import { saveUser } from './authenticatedUser';
 
 export const loginUser = async (email: string, password: string) => {
   try {
@@ -131,4 +131,12 @@ export const getUserQuizz = async (userId: number) => {
 } catch (err) {
   console.error('Failed to load');
 }
+}
+
+export const getAttendees = async (id: number)=> {
+ const res = await apiRequest({
+  method: 'GET',
+  url: `/quizz/attendees/${id}`,
+ })
+ return res;
 }
