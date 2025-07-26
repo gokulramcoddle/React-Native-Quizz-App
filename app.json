@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Quizz",
-    "slug": "Quizz",
+    "name": "React-Native-Practice",
+    "slug": "React-Native-Practice",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/Quizz.png",
