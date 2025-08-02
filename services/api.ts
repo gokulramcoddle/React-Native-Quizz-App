@@ -27,9 +27,6 @@ api.interceptors.request.use(async (config) => {
   if (token) {
     // Safe way to set Authorization header
     config.headers.set?.('Authorization', `Bearer ${token}`);
-    console.log('[HTTP]', config.method?.toUpperCase(), config.url, '→ Auth attached');
-  } else {
-    console.log('[HTTP]', config.method?.toUpperCase(), config.url, '→ No token');
   }
 
   return config;

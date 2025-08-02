@@ -13,6 +13,7 @@ import {
   TouchableOpacity,
   ScrollView,
   Alert,
+  ActivityIndicator,
 } from "react-native";
 import AppText from "@/components/AppText";
 import AppButton from "@/components/AppButton";
@@ -20,7 +21,7 @@ import AppTitle from "@/components/AppTitle";
 
 export default function CreateQuestions() {
   const [quizTitle, setQuizTitle] = useState("");
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [successModalVisible, setSuccessModalVisible] = useState(false);
 const [generatedCode, setGeneratedCode] = useState<string | null>(null); 
   const [questions, setQuestions] = useState<any[]>([]);
@@ -99,12 +100,11 @@ const [generatedCode, setGeneratedCode] = useState<string | null>(null);
   }
 
   try {
+    setLoading(true);
     const userData = await getUser();
-    console.log("user", userData);
     if (!userData?.id) {
       throw new Error("User not found");
     }
-
     // 1. Create the quiz
     const quizResponse = await createQuizz(quizTitle, userData.id);
     const quizzId = quizResponse?.quiz.id || 0;
@@ -130,6 +130,8 @@ setSuccessModalVisible(true);
   } catch (err) {
     console.error("Error publishing quiz:", err);
     Alert.alert("Error", "Failed to publish quiz. Please try again.");
+  } finally {
+     setLoading(false);
   }
 };
 
@@ -184,7 +186,12 @@ setSuccessModalVisible(true);
       </ScrollView>
 
       <View style={{ marginTop: 30, marginBottom: 20 }}>
-        <AppButton title="🚀 Publish Quiz" onPress={handlePublish} />
+        {loading ? (
+                    <View style={styles.loadingWrapper}>
+                      <ActivityIndicator size="small" color="#a811bfff" />
+                    </View>
+                  ) : (
+                  <AppButton title="🚀 Publish Quiz" onPress={handlePublish} /> )}
       </View>
 
       <Modal visible={showModal} animationType="slide">
@@ -281,6 +288,10 @@ successPopup: {
   width: '80%',
   alignItems: 'center',
 },
+loadingWrapper: {
+    marginTop: 10,
+    alignItems: 'center',
+  },
 successTitle: {
   fontSize: 20,
   fontWeight: 'bold',

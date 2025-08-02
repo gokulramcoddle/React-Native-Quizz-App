@@ -15,6 +15,7 @@ import { useLocalSearchParams } from 'expo-router';
 import { getQuizzQuestions, submitQuizResult } from '@/services/apiService';
 import AppButton from '@/components/AppButton';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import AppTitle from '@/components/AppTitle';
 
 interface Option {
   id: number;
@@ -42,6 +43,7 @@ const QuizScreen = () => {
   const [quizData, setQuizData] = useState<QuizData | null>(null);
   const [selectedOptions, setSelectedOptions] = useState<Record<number, number>>({});
   const [loading, setLoading] = useState(false);
+    const [isSubmit, setIsSubmit] = useState(false);
   const [page, setPage] = useState(1);
   const [showResult, setShowResult] = useState(false);
   const [score, setScore] = useState(0);
@@ -76,6 +78,7 @@ const QuizScreen = () => {
   let total = 0;
 
   try {
+    setIsSubmit(true);
     const res = await getQuizzQuestions(Array.isArray(code) ? code[0] : code, 1, 1000);
     const allQuestions: Question[] = res.quiz.questions;
     const quizId = res.quiz.id;
@@ -103,6 +106,8 @@ const QuizScreen = () => {
   } catch (error: any) {
     console.error('Error while submitting quiz', error?.response || error);
     Alert.alert('Error', 'Could not submit quiz.');
+  } finally {
+    setIsSubmit(false);
   }
 };
 
@@ -111,17 +116,15 @@ const QuizScreen = () => {
   if (loading || !quizData) {
     return (
       <View style={styles.centered}>
-        <ActivityIndicator size="large" />
+        <ActivityIndicator size="large" color='#a811bfff' />
       </View>
     );
   }
 
-  const currentQuestion = quizData.questions[0];
-
   if (showResult) {
     return (
       <View style={styles.centered}>
-        <Text style={styles.title}>Quiz Completed!</Text>
+        <AppTitle style={styles.title}>Quiz Completed!</AppTitle>
         <Text
   style={[
     styles.scoreText,
@@ -135,11 +138,12 @@ const QuizScreen = () => {
 >
   Your Score: {score} / {quizData.total_questions}
 </Text>
-
-
-      </View>
+</View>
     );
-  }
+}
+
+  const currentQuestion = quizData.questions[0];
+  const hasSelectedOption = selectedOptions[currentQuestion.id] !== undefined;
 
   return (
   <SafeAreaView style={{ flex: 1 }}>
@@ -172,14 +176,19 @@ const QuizScreen = () => {
           {page} / {quizData.total_questions}
         </Text>
         {page < quizData.total_questions ? (
-  <AppButton title="Next" onPress={() => setPage((prev) => prev + 1)} />
+  <AppButton title="Next" 
+  onPress={() => setPage((prev) => prev + 1)}
+  disabled={!hasSelectedOption}
+   />
     ) : (
      loading ? (
        <View style={styles.loadingWrapper}>
         <ActivityIndicator size="small" color="#007AFF" />
        </View>
     ) : (
-       <AppButton title="Submit" onPress={handleSubmit} disabled={loading} />
+       <AppButton title={isSubmit ? 'Submitting...' : 'Submit'}
+        onPress={handleSubmit} 
+        disabled={!hasSelectedOption || isSubmit} />
        )
     )}
       </View>
@@ -202,11 +211,9 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   title: {
-    fontSize: 15,
+    fontSize: 35,
     color: 'white',
-    fontWeight: 'bold',
     marginBottom: 10,
-    marginTop: 100,
     textAlign: 'center',
   },
   questionText: {
@@ -237,6 +244,7 @@ const styles = StyleSheet.create({
   },
   pageText: {
     fontSize: 16,
+    color: 'white',
   },
   scoreText: {
     fontSize: 25,

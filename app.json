@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "QuizGo",
-    "slug": "QuizGo",
+    "slug": "React-Native-Practice",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/quizz-logo.png",

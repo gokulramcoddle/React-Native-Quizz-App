@@ -25,7 +25,6 @@ useEffect(()=>{
     try{
       const user = await getUser();
       setUserData(user);
-      console.log(user);
     } catch {
       Alert.alert('Failed to fetch user');
     }

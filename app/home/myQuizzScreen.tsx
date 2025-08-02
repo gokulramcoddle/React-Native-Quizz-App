@@ -26,7 +26,6 @@ export default function MyQuizz() {
       if (!authenticatedUser) return;                // no user, no call
 
       const res = await getUserQuizz(authenticatedUser.id);
-      console.log('fetching quizz', res)
       setQuizzes(res.quizzes || []);
     } catch (err) {
       console.error('error fetching quizzes', err);
@@ -72,7 +71,7 @@ export default function MyQuizz() {
           </TouchableOpacity>
         ))
       ) : (
-          <Text style={{ textAlign: 'center', marginTop: 20 }}>
+          <Text style={{ textAlign: 'center', marginTop: 40, fontSize: 18, color: '#a811bfa7'  }}>
             No quizzes found.
           </Text>
         )}
