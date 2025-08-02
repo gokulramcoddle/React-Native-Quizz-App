@@ -1,12 +1,13 @@
 import AppButton from '@/components/AppButton';
 import AppText from '@/components/AppText';
+import AppTitle from '@/components/AppTitle';
 import { isValid } from '@/services/apiService';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { Button, StyleSheet, Text, TextInput, View, ActivityIndicator } from 'react-native';
 
 export default function AttendInfoScreen() {
-  const [form, setForm] = useState({ code: 'X_drL4', name: '', email: '' });
+  const [form, setForm] = useState({ code: '', name: '', email: '' });
   const [errors, setErrors] = useState({ code: '', name: '', email: '' });
   const [loading, setLoading] = useState(false); //Add loading state
 
@@ -23,18 +24,17 @@ export default function AttendInfoScreen() {
       newErrors.code = 'Code is required';
       valid = false;
     } else {
-      try {
-        
-        const res = await isValid(form.code);
-        if (!res.success) {
-          newErrors.code = 'Invalid code';
-          valid = false;
-        }
-      } catch (error: any) {
-        newErrors.code = `${error.message}`;
-        valid = false;
-      }
+      try {   
+        await isValid(form.code);
+      }  catch (error: any) {
+         if (error.response?.data?.message) {
+         newErrors.code = error.response.data.message;
+      } else {
+        newErrors.code = 'Something went wrong';
+     }
+       valid = false;
     }
+  }
 
     if (!form.name.trim()) {
       newErrors.name = 'Name is required';
@@ -73,7 +73,7 @@ export default function AttendInfoScreen() {
 
   return (
     <View style={styles.container}>
-      <AppText style={styles.title}>Enter Your Details</AppText>
+      <AppTitle style={styles.title}>Get Started !</AppTitle>
       
       <Text style={styles.text}>Code:</Text>
       <TextInput
@@ -105,7 +105,7 @@ export default function AttendInfoScreen() {
 
       {loading ? (
         <View style={styles.loadingWrapper}>
-          <ActivityIndicator size="small" color="#007AFF" />
+          <ActivityIndicator size="small" color="#a811bfff" />
         </View>
       ) : (
         <AppButton title="Start" variant='primary' onPress={handleStart} disabled={loading} />
@@ -124,7 +124,6 @@ const styles = StyleSheet.create({
     fontSize: 24,
     marginBottom: 20,
     textAlign: 'center',
-    fontWeight: 'bold',
   },
   input: {
     color: "white",

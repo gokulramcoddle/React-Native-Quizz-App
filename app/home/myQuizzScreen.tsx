@@ -1,7 +1,7 @@
+import AppTitle from '@/components/AppTitle';
 import { formatFullDateWithAgo } from '@/helper/formatter';
 import { getUserQuizz } from '@/services/apiService';
 import { getUser } from '@/services/authenticatedUser';
-import { useNavigation } from '@react-navigation/native';
 import { router } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
@@ -42,7 +42,7 @@ export default function MyQuizz() {
   /* ---------- UI ---------- */
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>My Quizzes</Text>
+      <AppTitle style={styles.title}>My Quiz</AppTitle>
 {loading ? (
   <ActivityIndicator style={styles.centered} size="large" color="#a811bfff" />
 ) : ( 
@@ -94,7 +94,6 @@ const styles = StyleSheet.create({
     fontSize: 50,
     marginTop: 25,
     textAlign: 'center',
-    fontWeight: 'bold',
     marginBottom: 60,
     color: '#ffffffff',
   },

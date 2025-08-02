@@ -1,12 +1,20 @@
+import AppAlert from "@/components/AppAlert";
 import AppButton from "@/components/AppButton";
 import { loginUser } from "@/services/apiService";
 import { Link, router } from "expo-router";
 import { useState } from "react";
-import { Alert, Button, StyleSheet, Text, TextInput, View } from "react-native";
+import { ActivityIndicator, Alert, Button, StyleSheet, Text, TextInput, View } from "react-native";
 
 export default function Login() {
   const [form, setForm] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState({ email: "", password: "" });
+  const [screenError, setScreenError] = useState('');
+  const [loading, setLoading] = useState(false);
+    const [alertContent, setAlertContent] = useState({ 
+        visiblity: false,
+        title: '',
+        message: '', 
+        });
 
   const handleChange = (key: string, value: string) => {
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -38,25 +46,26 @@ export default function Login() {
   if (!validate()) return;
 
   try {
+    setLoading(true);
     const response = await loginUser(form.email, form.password);
-
-    if (response.error) {
-      Alert.alert("Login Failed", "Invalid email or password");
-    } else {
-      Alert.alert("Login Successful", `Welcome ${response?.user.name}`);
       router.replace('/home/homeScreen');
-      
-      // Navigate to the next screen here if needed
-    }
-  } catch (err) {
-    Alert.alert("Error", "Something went wrong. Please try again.");
+  } catch (err: any) {
+   if (err.response?.status === 401) {
+      setScreenError("Invalid email or password");
+    } else {
+      setScreenError("Something went wrong. Please try again.");
+    }  
+  } finally {
+    setLoading(false);
   }
 };
-
 
   return (
     <View style={styles.container}>
      <Text style={styles.header}>Login</Text>
+     { screenError && (
+  <Text style={styles.screenError}>{screenError}</Text>
+  )}
       <Text style={styles.text}>Email:</Text>
       <TextInput
         placeholder="Email"
@@ -76,14 +85,27 @@ export default function Login() {
         secureTextEntry
       />
       {errors.password ? <Text style={styles.error}>{errors.password}</Text> : null}
-
-      <AppButton title="Login" onPress={handleLogin} />
+     {loading ? (
+            <View style={styles.loadingWrapper}>
+              <ActivityIndicator size="small" color="#a811bfff" />
+            </View>
+          ) : ( 
+          <AppButton title="Login" onPress={handleLogin} />)}
       <Text style={styles.message}>
   Don’t have an account?{' '}
   <Text style={styles.link} onPress={() => router.replace('/auth/Signup')}>
     Sign up
   </Text>
 </Text>
+<AppAlert
+  visible={alertContent.visiblity}
+  title={alertContent.title}
+  message={alertContent.message}
+  onClose={() =>
+    setAlertContent({ visiblity: false, title: '', message: '' })
+  }
+/>
+
     </View>
   );
 }
@@ -125,5 +147,14 @@ const styles = StyleSheet.create({
   link: {
     color: '#a811bfff',
     textDecorationLine: 'underline',
+  }, 
+  loadingWrapper: {
+    marginTop: 10,
+    alignItems: 'center',
   },
+   screenError : {
+    marginBottom:15,
+     color: "red",
+     textAlign: 'center',
+  }
 });

@@ -1,112 +1,128 @@
+import React, { useState, useCallback, useEffect } from "react";
+import { View, Text, ActivityIndicator, StyleSheet, Image } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
-import { View, StyleSheet, ActivityIndicator, Alert } from "react-native";
 import { router } from "expo-router";
-import { useState, useCallback } from "react";
+import AppButton from "@/components/AppButton";
 import { getStoredToken } from "@/services/api";
 import { getUser } from "@/services/authenticatedUser";
-import AppButton from "@/components/AppButton";
-import AppText from "@/components/AppText";
+import AppTitle from "@/components/AppTitle";
 
 export default function Index() {
   const [checkingAuth, setCheckingAuth] = useState(true);
   const [isCreator, setIsCreator] = useState(false);
-
+  // Wait until fonts are loaded and auth is checked
   useFocusEffect(
     useCallback(() => {
-      const checkAuth = async () => {
+      const prepare = async () => {
         try {
           const token = await getStoredToken();
           const user = await getUser();
-          if (token && user) {
-            setIsCreator(true);
-          } else {
-            setIsCreator(false);
-          }
-        } catch (err: any) {
-          Alert.alert("Auth Error", err.message || "Something went wrong");
+          setIsCreator(!!(token && user));
+        } catch (e) {
+          console.warn(e);
         } finally {
           setCheckingAuth(false);
         }
       };
 
-      setCheckingAuth(true); // show loader again on re-focus
-      checkAuth();
+      prepare();
     }, [])
   );
-
+  
   if (checkingAuth) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" />
+        <ActivityIndicator size="large" color="#a811bfff" />
       </View>
     );
   }
 
   return (
     <View style={styles.container}>
-      <AppText style={styles.title}>Quizz</AppText>
+      <View style={styles.titleContainer}>
+  <Image
+    source={require("@/assets/images/quizz-logo-removebg-preview.png")}
+    style={styles.img}
+  />
+  <AppTitle style={styles.title}>uizGo</AppTitle>
+  </View>
       <View style={styles.buttons}>
-        <View style={styles.buttonWrapper}>
-          <AppButton
-            style={styles.attendBtn}
-            title="Attend Quizz"
-            onPress={() => router.push("/attendee/entryScreen")}
-          />
-        </View>
-        <View style={styles.buttonWrapper}>
-          <AppButton
-            style={styles.createBtn}
-            title={isCreator ? "Create Quizz" : "Creator Login"}
-            onPress={() =>
-              router.push(isCreator ? "/home/homeScreen" : "/auth/Login")
-            }
-          />
-        </View>
+        <AppButton
+          style={styles.attendBtn}
+          title="Attend Quizz"
+          onPress={() => router.push("/attendee/entryScreen")}
+        />
+        <AppButton
+          style={styles.createBtn}
+          title={isCreator ? "Create Quizz" : "Creator Login"}
+          onPress={() =>
+            router.push(isCreator ? "/home/homeScreen" : "/auth/Login")
+          }
+        />
       </View>
+      <View style={styles.footer}>
+  <AppTitle style={styles.footerText}>Developed by Gokul Ram Tamil</AppTitle>
+</View>
     </View>
   );
 }
 
-
-
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    backgroundColor: "transparent",
-    gap: 50,
-    padding: 20,
-  },
   loadingContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
   },
-  title: {
-    fontSize: 90,
-    fontWeight: "bold",
-    marginBottom: 20,
-    textAlign: "center",
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    padding: 20,
+    gap: 50,
   },
   buttons: {
-    flexDirection: "column",
     padding: 40,
     marginTop: 120,
-    gap: 10,
-  },
-  buttonWrapper: {
-    marginBottom: 10,
+    gap: 20,
   },
   attendBtn: {
     backgroundColor: "#a811bfff",
-    paddingVertical: 10,
+    paddingVertical: 15,
   },
   createBtn: {
     backgroundColor: "transparent",
     elevation: 0,
     borderWidth: 1,
     borderColor: "#a811bfff",
-    paddingVertical: 10,
-  },
-});
+    paddingVertical: 15,
+  }, 
+ titleContainer: {
+  marginTop: 50,
+  flexDirection: "row",
+  alignItems: "center",
+  marginRight: 53,
+  justifyContent: "center",
+},
+img: {
+  width: 200, // or any responsive value
+  height: 200,
+  resizeMode: "contain",
+  marginRight: -50, // space between image and text
+},
+title: {
+  color: "#fff",
+  fontFamily: "RussoOne",
+  fontSize: 85,
+}, 
+footer: {
+  position: 'absolute',
+  bottom: 0,
+  right: 10,
+},
+footerText: {
+  padding: 5,
+  marginRight:3,
+  fontSize: 7.3,
+  color: '#efa3fba5',
+},
 
+});

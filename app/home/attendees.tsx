@@ -5,6 +5,7 @@ import { useLocalSearchParams } from 'expo-router';
 import { getAttendees } from '@/services/apiService';
 import AppText from '@/components/AppText';
 import { formatFullDateWithAgo } from '@/helper/formatter';
+import AppTitle from '@/components/AppTitle';
 
 interface Attendee {
   id: string;
@@ -42,7 +43,7 @@ const AttendeesScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Quiz Attendees</Text>
+      <AppTitle style={styles.title}>Quiz Attendees</AppTitle>
    <ScrollView contentContainerStyle={{ flexGrow: 1 }}         
      showsVerticalScrollIndicator={false} >
  {attendees.length > 0 ? attendees.map((item) => (
@@ -84,10 +85,9 @@ export default AttendeesScreen;
 const styles = StyleSheet.create({
 container: { flex: 1, padding: 16 },
  title: {
-    fontSize: 50,
-    marginTop: 45,
+    fontSize: 35,
+    marginTop: 65,
     textAlign: 'center',
-    fontWeight: 'bold',
     marginBottom: 20,
     color: '#e11fffff',
   },

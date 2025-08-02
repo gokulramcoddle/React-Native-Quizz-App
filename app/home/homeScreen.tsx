@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   SafeAreaView,
   View,
@@ -10,13 +10,28 @@ import {
 import { router } from 'expo-router';
 import AppButton from '@/components/AppButton';
 import { clearToken } from '@/services/api';
-import { clearUser } from '@/services/authenticatedUser';
+import { clearUser, getUser } from '@/services/authenticatedUser';
  import { Alert } from 'react-native'; 
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import AppText from '@/components/AppText';
+import AppTitle from '@/components/AppTitle';
+import { formatName } from '@/helper/formatter';
 
 export default function HomeScreen() {
+const [userData, setUserData] = useState<any>({});
 
+useEffect(()=>{
+  async function fetchUser() {
+    try{
+      const user = await getUser();
+      setUserData(user);
+      console.log(user);
+    } catch {
+      Alert.alert('Failed to fetch user');
+    }
+  }
+  fetchUser();
+},[])
 
 const handleLogout = () => {
   Alert.alert(
@@ -51,9 +66,18 @@ const handleLogout = () => {
 
       {/* Hero banner */}
       <View style={styles.heroWrapper}>
-       <AppText style={styles.title}>Quiz {"\n"}Creator</AppText>
-        <Text style={styles.subtitle}>Design, publish, and track your quizzes effortlessly.</Text>
+<AppTitle style={styles.title}>
+  QuizGo{'\n'}
+  <Text style={{color:'#e45afaff', fontSize: 45}}>Creator</Text>
+</AppTitle>
+        <AppTitle style={styles.subtitle}>Design, publish, and track your quizzes effortlessly.</AppTitle>
       </View>
+    <View style={styles.userGreeting}>
+  <Icon name="person" size={24} color="#fff" style={styles.userIcon} />
+  <AppText style={styles.greetingText}>
+    Hi, {formatName(userData?.name ?? 'User')}!
+  </AppText>
+</View>
 
       {/* Navigation section */}
       <ScrollView
@@ -62,12 +86,12 @@ const handleLogout = () => {
       >
         {/* Primary creator action */}
         <AppButton title="Create Quiz" onPress={() => router.push('/creator/createQuestion')} />
-        <AppButton title="My Quizzes" onPress={() => router.push('/home/myQuizzScreen')} />
+        <AppButton title="My Quiz" onPress={() => router.push('/home/myQuizzScreen')} />
         <AppButton
-            title="<< Back"
+            title="← Back"
            onPress={() => router.replace('/?skipAuthCheck=true')} />
         {/* Danger zone */}
-       <AppButton style= {styles.logoutBtn} title='Log out' onPress={handleLogout} />
+       <AppButton style={styles.logoutBtn} title='Log out' onPress={handleLogout} />
       </ScrollView>
     </SafeAreaView>
   );
@@ -89,12 +113,12 @@ const styles = StyleSheet.create({
   title: {
     marginTop: 100,
     fontSize: 65,
-    fontWeight: '900',
+    lineHeight: 60,
     color: WHITE,
     textAlign: 'center',
   },
   subtitle: {
-    marginTop: 6,
+    marginTop: 15,
     fontSize: 15,
     color: GRAY,
     textAlign: 'center',
@@ -113,5 +137,24 @@ const styles = StyleSheet.create({
     borderColor: 'red',
     alignSelf: 'center',
     paddingHorizontal: 40    
-  }
+  }, 
+  userGreeting: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  justifyContent: 'center',
+  paddingVertical: 10,
+  marginTop: 10,
+},
+
+userIcon: {
+  marginRight: 8,
+  color:'#a811bfff' ,
+},
+
+greetingText: {
+  color: '#fff',
+  fontSize: 16,
+  fontWeight: '800',
+  textAlign: 'center',
+},
 });

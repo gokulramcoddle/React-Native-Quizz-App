@@ -18,9 +18,10 @@ export const loginUser = async (email: string, password: string) => {
     return data;
   } catch (err: any) {
     console.error('[login] error', err);
-    return err.response?.data || { error: 'Unknown error' };
+    throw err;
   }
 };
+
 
 
 

@@ -16,13 +16,16 @@ import {
 } from "react-native";
 import AppText from "@/components/AppText";
 import AppButton from "@/components/AppButton";
+import AppTitle from "@/components/AppTitle";
 
 export default function CreateQuestions() {
   const [quizTitle, setQuizTitle] = useState("");
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [successModalVisible, setSuccessModalVisible] = useState(false);
 const [generatedCode, setGeneratedCode] = useState<string | null>(null); 
   const [questions, setQuestions] = useState<any[]>([]);
   const [showModal, setShowModal] = useState(false);
+  const [copy, setCopy] = useState(false);
   const [questionText, setQuestionText] = useState("");
   const [options, setOptions] = useState(["", "", "", ""]);
   const [correctIndex, setCorrectIndex] = useState<number | null>(null);
@@ -38,7 +41,7 @@ const [generatedCode, setGeneratedCode] = useState<string | null>(null);
   const handleCopy = () => {
   if (generatedCode) {
     Clipboard.setStringAsync(generatedCode);
-    Alert.alert("Copied", "Quiz code copied to clipboard!");
+    setCopy(true);
   }
 }
 
@@ -132,13 +135,14 @@ setSuccessModalVisible(true);
 
   return (
     <View style={styles.container}>
-      <AppText style={styles.title}>Create Quiz</AppText>
+      <AppTitle style={styles.title}>Create Quiz</AppTitle>
       <Text style={{color: '#a811bfff',fontWeight: 700}}>Quizz Title:</Text>
       <TextInput
         placeholder="Enter Quiz Title"
         value={quizTitle}
         onChangeText={setQuizTitle}
         style={styles.input}
+        maxLength={40}
       />
 
       <AppButton title="+ Add Question" onPress={() => { resetForm(); setShowModal(true); }} />
@@ -185,7 +189,7 @@ setSuccessModalVisible(true);
 
       <Modal visible={showModal} animationType="slide">
         <View style={styles.modal}>
-          <Text style={styles.modalTitle}>{editIndex !== null ? "Edit Question" : "New Question"}</Text>
+          <AppTitle style={styles.modalTitle}>{editIndex !== null ? "Edit Question" : "New Question"}</AppTitle>
           <AppText style={{color: '#a811bfff',fontWeight: 700}}>Enter Question:</AppText>
           <TextInput
             placeholder="Enter question text"
@@ -234,6 +238,7 @@ setSuccessModalVisible(true);
       <Text style={styles.successMessage}>Your quiz has been published.</Text>
 
       <Text style={{ fontWeight: 'bold', marginTop: 10 }}>Quiz Code:</Text>
+      {copy && <Text style={{ fontWeight: 'bold', marginTop: 5, fontSize: 10, color: 'green' }}>Copied successfully!!</Text>}
       <TouchableOpacity onPress={handleCopy}>
         <Text style={styles.codeText}>{generatedCode}</Text>
         <Text style={styles.copyHint}>Tap to copy</Text>
@@ -249,7 +254,7 @@ setSuccessModalVisible(true);
 
 const styles = StyleSheet.create({
   container: { padding: 20, paddingTop: 60, flex: 1 },
-  title: { fontSize: 22, marginBottom: 20, textAlign: "center", fontWeight: "bold" },
+  title: { fontSize: 22, marginBottom: 20, textAlign: "center" },
   input: {color: 'white', borderWidth: 1, padding: 10, borderRadius: 5, marginBottom: 20, borderColor: '#a811bfff', },
   questionItem: {
     borderWidth: 1, borderColor: "#ddd", padding: 12, borderRadius: 8,
@@ -258,7 +263,7 @@ const styles = StyleSheet.create({
   questionText: { fontWeight: "bold", marginBottom: 4 },
   qButtons: { justifyContent: "space-between", marginLeft: 10 },
   modal: { padding: 20, justifyContent: "center", flex: 1,backgroundColor: '#0b0a2f' },
-  modalTitle: { color: 'white',fontSize: 26, marginBottom: 20, textAlign: "center", fontWeight: "bold" },
+  modalTitle: { color: 'white',fontSize: 26, marginBottom: 20, textAlign: "center" },
   optionRow: { flexDirection: "row", alignItems: "center", marginBottom: 10 },
   optionInput: { color: 'white' ,borderColor: '#a811bfff',borderWidth: 1, padding: 10, flex: 1, borderRadius: 5 },
   radio: { fontSize: 24, marginLeft: 10 },

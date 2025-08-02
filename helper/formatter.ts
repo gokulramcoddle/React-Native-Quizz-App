@@ -22,3 +22,14 @@ export function formatFullDateWithAgo(dateInput: string | Date, withTime: boolea
 
   return `${formattedDate} (${timeAgo})`;
 }
+
+export function formatName(name: string): string {
+  return name
+    .trim()                              // remove leading/trailing spaces
+    .split(/\s+/)                        // split by any number of spaces
+    .map(word =>
+      word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+    )
+    .join(' ');                          // re-join with single space
+}
+

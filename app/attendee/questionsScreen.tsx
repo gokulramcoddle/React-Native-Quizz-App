@@ -9,10 +9,12 @@ import {
   StyleSheet,
   Button,
   Alert,
+  ScrollView,
 } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { getQuizzQuestions, submitQuizResult } from '@/services/apiService';
 import AppButton from '@/components/AppButton';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
 interface Option {
   id: number;
@@ -140,7 +142,9 @@ const QuizScreen = () => {
   }
 
   return (
-    <View style={styles.container}>
+  <SafeAreaView style={{ flex: 1 }}>
+<ScrollView contentContainerStyle={styles.container}
+  showsVerticalScrollIndicator={false}>
       <Text style={styles.title}>{quizData.title}</Text>
 
       <Text style={styles.questionText}>{currentQuestion.text}</Text>
@@ -179,7 +183,8 @@ const QuizScreen = () => {
        )
     )}
       </View>
-    </View>
+    </ScrollView>
+    </SafeAreaView>
   );
 };
 
@@ -187,8 +192,8 @@ export default QuizScreen;
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    padding: 20,
+     padding: 20,
+    paddingBottom: 60, 
   },
   centered: {
     flex: 1,
@@ -197,10 +202,10 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   title: {
-    fontSize: 40,
+    fontSize: 15,
     color: 'white',
     fontWeight: 'bold',
-    marginBottom: 20,
+    marginBottom: 10,
     marginTop: 100,
     textAlign: 'center',
   },
