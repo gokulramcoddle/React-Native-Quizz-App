@@ -129,6 +129,10 @@ const styles = StyleSheet.create({
     color: '#bfb3fdff',
     marginTop: 4,
   },
-    centered: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+    centered: { 
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center", 
+  },
 
 });

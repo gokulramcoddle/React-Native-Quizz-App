@@ -149,7 +149,7 @@ const QuizScreen = () => {
   <SafeAreaView style={{ flex: 1 }}>
 <ScrollView contentContainerStyle={styles.container}
   showsVerticalScrollIndicator={false}>
-      <Text style={styles.title}>{quizData.title}</Text>
+      <AppTitle style={styles.title}>{quizData.title}</AppTitle>
 
       <Text style={styles.questionText}>{currentQuestion.text}</Text>
 
@@ -200,10 +200,12 @@ const QuizScreen = () => {
 export default QuizScreen;
 
 const styles = StyleSheet.create({
-  container: {
-     padding: 20,
-    paddingBottom: 60, 
-  },
+ container: {
+  flexGrow: 1,
+  padding: 20,
+  justifyContent: 'center',
+  paddingBottom: 60,
+},
   centered: {
     flex: 1,
     justifyContent: 'center',

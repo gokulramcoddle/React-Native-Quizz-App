@@ -1,13 +1,14 @@
 import AppButton from '@/components/AppButton';
+import AppTitle from '@/components/AppTitle';
 import { signUpUser } from '@/services/apiService';
 import { Link, router } from 'expo-router';
 import { useState } from 'react';
-import { Alert, Button, StyleSheet, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, Alert, Button, StyleSheet, Text, TextInput, View } from 'react-native';
 
 export default function Signup() {
   const [form, setForm] = useState({ name: '', email: '', password: '' });
   const [errors, setErrors] = useState({ name: '', email: '', password: '' });
-
+  const [loading, setLoading] = useState(false);
   const handleChange = (key: string, value: string) => {
     setForm((prev) => ({ ...prev, [key]: value }));
     setErrors((prev) => ({ ...prev, [key]: '' }));
@@ -41,21 +42,26 @@ export default function Signup() {
 
 const handleSignup = async () => {
   if (!validate()) return;
-
+  try{
+    setLoading(true);
   const response = await signUpUser(form.name, form.email, form.password);
-
   if (!response) {
     Alert.alert('Signup Failed', response.message);
   } else {
     Alert.alert('Signup Successful', 'You can now login');
-    // setForm({ name: '', email: '', password: '' });
+    setForm({ name: '', email: '', password: '' });
     router.replace('/auth/Login');
   }
+} catch (err) {
+   Alert.alert('Somthing went wrong please try again.')
+} finally {
+  setLoading(false);
+}
 };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Create Account</Text>
+      <AppTitle style={styles.header}>Create Account</AppTitle>
        <Text style={styles.text}>Name:</Text>
       <TextInput
         placeholder="Name"
@@ -83,8 +89,12 @@ const handleSignup = async () => {
         style={styles.input}
       />
       {errors.password ? <Text style={styles.error}>{errors.password}</Text> : null}
-
-      <AppButton title="Sign Up" onPress={handleSignup} />
+    {loading ? (
+                <View style={styles.loadingWrapper}>
+                  <ActivityIndicator size="small" color="#a811bfff" />
+                </View>
+              ) : ( 
+                <AppButton title="Sign Up" onPress={handleSignup} />)}
        <Text style={styles.message}>
   Already have an account?{" "}
   <Text style={styles.link} onPress={() => router.replace("/auth/Login")}>
@@ -103,7 +113,6 @@ const styles = StyleSheet.create({
   },
   header: {
     color: "white",
-    fontWeight: "700",
     fontSize: 28,
     marginBottom: 25,
     textAlign: "center",
@@ -127,10 +136,13 @@ const styles = StyleSheet.create({
    textAlign: "center",
    color: "white",
     marginTop: 15,
-  },
-  
+  }, 
   link: {
     color: '#a811bfff',
     textDecorationLine: 'underline',
   },
+   loadingWrapper: {
+    marginTop: 10,
+    alignItems: 'center',
+  }
 });

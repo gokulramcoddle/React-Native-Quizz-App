@@ -95,7 +95,7 @@ container: { flex: 1, padding: 16 },
   name: { fontSize: 25, fontWeight: '700' },
   email: { fontSize: 15, color: '#ae9effdb' },
   centered: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  errorText: { color: 'red', textAlign: 'center', marginTop: 20 },
+  errorText: { color: 'red', textAlign: 'center', justifyContent: 'center', },
   score: {color: 'white', fontSize: 18},
   date: {color: '#d5d5d5ff'}
 });

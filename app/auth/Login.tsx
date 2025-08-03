@@ -1,5 +1,6 @@
 import AppAlert from "@/components/AppAlert";
 import AppButton from "@/components/AppButton";
+import AppTitle from "@/components/AppTitle";
 import { loginUser } from "@/services/apiService";
 import { Link, router } from "expo-router";
 import { useState } from "react";
@@ -47,11 +48,11 @@ export default function Login() {
 
   try {
     setLoading(true);
-    const response = await loginUser(form.email, form.password);
+    await loginUser(form.email, form.password);
       router.replace('/home/homeScreen');
   } catch (err: any) {
    if (err.response?.status === 401) {
-      setScreenError("Invalid email or password");
+   setScreenError(`${err.response.data.error}`);
     } else {
       setScreenError("Something went wrong. Please try again.");
     }  
@@ -62,7 +63,7 @@ export default function Login() {
 
   return (
     <View style={styles.container}>
-     <Text style={styles.header}>Login</Text>
+     <AppTitle style={styles.header}>Login</AppTitle>
      { screenError && (
   <Text style={styles.screenError}>{screenError}</Text>
   )}
@@ -121,7 +122,6 @@ const styles = StyleSheet.create({
   },
   header: {
     color: "white",
-   fontWeight: "700",
     fontSize: 28,
     marginBottom: 25,
     textAlign: "center",
